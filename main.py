@@ -7,6 +7,7 @@ import os
 import sys
 import time
 import zipfile
+from PIL import Image
 
 
 def get_buttons(driver,url):
@@ -48,7 +49,15 @@ def create_pdf(tmp_path,filename):
     for i in range(len(file_names)):
         os.rename(files_path + '/' + file_names[i],files_path+ '/' + str(i) + file_names[i].strip('.')[-1])
     file_names = os.listdir(files_path)
+    image_list = []
+    for file_name in file_names:
+        image = Image.open(files_path + '/' + file_name)
+        imconv = image.convert('RGB')
+        image_list.append(imconv)
+    first_image = image_list.pop(0)
+    first_image.save(pdf_path+'/'+filename.strip('.')[0],save_all=True, append_images=image_list)
 
+    
     
 
 
@@ -107,4 +116,4 @@ if __name__ == "__main__":
     if not os.path.exists(files_path):
         os.mkdir(files_path)
 
-
+    create_pdf(tmp_path,'0.zip')
